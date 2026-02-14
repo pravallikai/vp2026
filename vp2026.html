@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Chitti 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Reenie+Beanie&family=Dancing+Script:wght@400;600;700&family=Satisfy&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --blush: #FFB6C1; --lavender: #E6E6FA; --mint: #E0F8E0;
+            --peach: #FFDAB9; --cream: #FFF8E7; --gold: #FFD700;
+            --rose: #FF69B4; --lilac: #DDA0DD;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--lavender) 50%, var(--blush) 100%);
+            color: #4A4A4A;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-20px) rotate(5deg); } }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.1); } 50% { transform: scale(1); } 75% { transform: scale(1.05); } }
+
+        .floating-heart { position: absolute; font-size: 20px; opacity: 0.4; animation: float 6s infinite ease-in-out; }
+        .star { position: absolute; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; animation: twinkle 3s infinite; box-shadow: 0 0 10px var(--gold); }
+
+        .music-player {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+            padding: 12px 20px; border-radius: 50px;
+            box-shadow: 0 8px 32px rgba(255,105,180,0.3);
+            display: flex; align-items: center; gap: 12px;
+        }
+
+        .music-btn {
+            background: linear-gradient(135deg, var(--rose), var(--lilac));
+            border: none; width: 40px; height: 40px; border-radius: 50%;
+            color: white; font-size: 18px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        section {
+            min-height: 100vh; padding: 80px 20px;
+            position: relative; z-index: 1;
+            display: none; opacity: 0;
+        }
+
+        section.active { display: block; animation: fadeIn 1.5s forwards; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .landing-page { display: flex; align-items: center; justify-content: center; }
+
+        .envelope {
+            width: 300px; height: 200px;
+            background: linear-gradient(135deg, #fff, var(--cream));
+            border-radius: 10px; position: relative;
+            box-shadow: 0 20px 60px rgba(255,105,180,0.4);
+            animation: heartbeat 2s infinite;
+            cursor: pointer;
+        }
+
+        .envelope::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid var(--blush);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .envelope-text {
+            position: absolute; top: 120%; left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Dancing Script', cursive;
+            font-size: 32px; color: var(--rose);
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+            white-space: nowrap;
+        }
+
+        .click-hint {
+            position: absolute; top: 140%; left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px; color: #888;
+            animation: float 2s infinite;
+        }
+
+        .intro-section {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
+        }
+
+        .intro-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(48px, 8vw, 96px);
+            color: var(--rose); margin-bottom: 40px;
+            text-shadow: 3px 3px 6px rgba(255,255,255,0.8);
+        }
+
+        .photo-collage {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px; max-width: 1200px;
+            margin: 40px auto; padding: 0 20px;
+        }
+
+        .photo-frame {
+            background: white; padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(255,105,180,0.2);
+            transform: rotate(-2deg);
+            transition: all 0.4s ease;
+        }
+
+        .photo-frame:nth-child(2n) { transform: rotate(2deg); }
+        .photo-frame:hover {
+            transform: rotate(0) scale(1.05);
+            box-shadow: 0 20px 50px rgba(255,105,180,0.4);
+            z-index: 10;
+        }
+
+        .photo-frame img {
+            width: 100%; height: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .intro-text {
+            max-width: 800px; margin: 40px auto;
+            font-family: 'Satisfy', cursive;
+            font-size: clamp(18px, 3vw, 24px);
+            line-height: 1.8;
+        }
+
+        .special-box {
+            background: rgba(255,255,255,0.95);
+            padding: 30px; border-radius: 20px;
+            margin: 40px auto; max-width: 700px;
+            box-shadow: 0 15px 40px rgba(255,105,180,0.3);
+            border: 3px dashed var(--rose);
+        }
+
+        .special-box h3 {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 32px; color: var(--rose);
+            margin-bottom: 20px;
+        }
+
+        .special-box p {
+            font-size: 20px; line-height: 1.8;
+            color: #555; margin-bottom: 15px;
+        }
+
+        .reasons-section { padding: 100px 20px; }
+
+        .reasons-header {
+            text-align: center; margin-bottom: 60px;
+        }
+
+        .reasons-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(40px, 6vw, 72px);
+            color: var(--rose); margin-bottom: 20px;
+        }
+
+        .reasons-counter {
+            position: fixed; top: 100px; left: 20px;
+            background: rgba(255,255,255,0.95);
+            padding: 20px 30px; border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(255,105,180,0.3);
+            z-index: 100;
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px; color: var(--rose);
+        }
+
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px; max-width: 1400px; margin: 0 auto;
+        }
+
+        .love-note {
+            background: rgba(255,255,255,0.95);
+            padding: 25px; border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(255,105,180,0.2);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative; overflow: hidden;
+        }
+
+        .love-note:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 40px rgba(255,105,180,0.4);
+        }
+
+        .note-number {
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px; color: var(--rose);
+            margin-bottom: 10px; font-weight: 600;
+        }
+
+        .note-text {
+            font-size: 16px; line-height: 1.6; color: #555;
+        }
+
+        .note-heart {
+            position: absolute; bottom: 10px; right: 10px;
+            font-size: 24px; opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .love-note:hover .note-heart {
+            opacity: 1; animation: heartbeat 1s infinite;
+        }
+
+        .proposal-section {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
+        }
+
+        .big-heart {
+            font-size: 120px;
+            animation: heartbeat 1.5s infinite;
+            margin-bottom: 40px;
+            filter: drop-shadow(0 0 30px rgba(255,105,180,0.6));
+        }
+
+        .proposal-question {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(36px, 6vw, 72px);
+            color: var(--rose); margin-bottom: 60px;
+            line-height: 1.4; max-width: 900px;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+        }
+
+        .answer-buttons {
+            display: flex; gap: 30px;
+            flex-wrap: wrap; justify-content: center;
+        }
+
+        .answer-btn {
+            padding: 20px 60px; font-size: 24px;
+            font-family: 'Dancing Script', cursive;
+            border: none; border-radius: 50px;
+            cursor: pointer; transition: all 0.4s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, var(--rose), var(--lilac));
+            color: white;
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.15) rotate(-3deg);
+            box-shadow: 0 20px 50px rgba(255,105,180,0.5);
+        }
+
+        .no-btn {
+            background: linear-gradient(135deg, #ddd, #bbb);
+            color: #666;
+        }
+
+        .no-btn:hover { transform: scale(0.95); opacity: 0.7; }
+
+        .celebration {
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; pointer-events: none;
+        }
+
+        .celebration.active { display: block; }
+
+        .confetti {
+            position: absolute; width: 10px; height: 10px;
+            background: var(--rose);
+            animation: confetti-fall 3s linear forwards;
+            font-size: 20px;
+        }
+
+        @keyframes confetti-fall {
+            to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .epilogue-section {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+
+        .epilogue-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(40px, 6vw, 64px);
+            color: var(--rose); margin-bottom: 60px;
+        }
+
+        .timeline {
+            max-width: 800px; margin: 0 auto;
+            position: relative; padding: 40px 0;
+        }
+
+        .timeline::before {
+            content: ''; position: absolute;
+            left: 50%; top: 0; bottom: 0; width: 2px;
+            background: linear-gradient(to bottom, var(--rose), var(--lavender));
+        }
+
+        .timeline-item {
+            margin-bottom: 50px; position: relative;
+            width: 45%; opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        .timeline-item:nth-child(odd) { left: 0; animation-delay: 0.2s; }
+        .timeline-item:nth-child(even) { left: 55%; animation-delay: 0.4s; }
+
+        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+
+        .timeline-content {
+            background: rgba(255,255,255,0.95);
+            padding: 25px; border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(255,105,180,0.2);
+        }
+
+        .timeline-date {
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px; color: var(--rose);
+            margin-bottom: 10px;
+        }
+
+        .timeline-text {
+            font-size: 16px; line-height: 1.6; color: #555;
+        }
+
+        .timeline-dot {
+            position: absolute; width: 20px; height: 20px;
+            background: var(--rose); border-radius: 50%;
+            top: 0; box-shadow: 0 0 20px var(--rose);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot { right: -60px; }
+        .timeline-item:nth-child(even) .timeline-dot { left: -60px; }
+
+        .final-note {
+            max-width: 700px; margin: 80px auto 40px;
+            background: rgba(255,255,255,0.95);
+            padding: 40px; border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(255,105,180,0.3);
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 28px; line-height: 1.8;
+            color: #555; text-align: center;
+            border: 3px dashed var(--rose);
+        }
+
+        .nav-buttons {
+            position: fixed; bottom: 40px;
+            left: 50%; transform: translateX(-50%);
+            display: flex; gap: 20px; z-index: 100;
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.95);
+            border: 2px solid var(--rose);
+            border-radius: 50px; color: var(--rose);
+            font-family: 'Dancing Script', cursive;
+            font-size: 18px; cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: var(--rose); color: white;
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .reasons-grid { grid-template-columns: 1fr; }
+            .timeline::before { left: 20px; }
+            .timeline-item, .timeline-item:nth-child(odd),
+            .timeline-item:nth-child(even) {
+                width: calc(100% - 60px);
+                left: 40px !important;
+            }
+            .timeline-item:nth-child(odd) .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: -30px !important;
+            }
+            .reasons-counter {
+                position: relative; top: 0; left: 0;
+                margin: 0 auto 20px; display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <div class="music-player">
+        <button class="music-btn" id="musicToggle">🎵</button>
+        <input type="range" class="volume-control" id="volumeControl" min="0" max="100" value="50">
+        <audio id="bgMusic" loop>
+            <source src="C:\Users\pvemu\Downloads\VP\sunshine-cute-baby-remix-made-with-Voicemod.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <section class="landing-page active" id="landingPage">
+        <div onclick="openEnvelope()">
+            <div class="envelope"></div>
+            <div class="envelope-text">For My Chitti 💕</div>
+            <div class="click-hint">Click to open 💖</div>
+        </div>
+    </section>
+
+    <section class="intro-section" id="introSection">
+        <h1 class="intro-title">Orey Kondeshu! ✨</h1>
+
+        <div class="photo-collage">
+            <div class="photo-frame">
+                <img src="C:\Users\pvemu\Downloads\VP\Media (3).jpg" alt="Our Memory">
+            </div>
+            <div class="photo-frame">
+                <img src="C:\Users\pvemu\Downloads\VP\Media (1).jpg" alt="Our Memory">
+            </div>
+            <div class="photo-frame">
+                <img src="C:\Users\pvemu\Downloads\VP\Media (2).jpg" alt="Our Memory">
+            </div>
+        </div>
+
+        <p class="intro-text">
+            Every moment with you feels like a dream I never want to wake from.
+            You are the poetry my heart has always longed to write,
+            the melody that makes my soul dance,
+            and the light that guides me through every storm.
+        </p>
+
+        <div class="special-box">
+            <h3>Kondaga, are you ready for this? 💝</h3>
+          
+            <p>My dearest Suresh (aka Chitti, aka Konda),</p>
+            <p><strong>Since June 5th, my world has been painted in the most beautiful colors. Every day with you is a new chapter in our love story, and I can't wait to write a lifetime more.</strong></p>
+            <p>This is my love letter to you—2026 reasons why you are my everything.</p>
+        </div>
+    </section>
+
+    <section class="reasons-section" id="reasonsSection">
+        <div class="reasons-counter" id="reasonsCounter">
+            Reasons Discovered: <span id="countNumber">0</span> / 2026
+        </div>
+
+        <div class="reasons-header">
+            <h2 class="reasons-title">2026 Reasons Why I Love You, Chitti</h2>
+            <p class="reasons-subtitle" style="font-size: 20px; font-style: italic; color: #777;">Each one a treasure, each one eternal ✨</p>
+        </div>
+
+        <div class="reasons-grid" id="reasonsGrid"></div>
+    </section>
+
+    <section class="proposal-section" id="proposalSection">
+        <div class="big-heart">💖</div>
+        <h2 class="proposal-question">
+            My dear Kondeshu,<br>
+            After 2026 reasons and a lifetime of moments yet to come...<br>
+            Will you be mine forever?
+        </h2>
+        <div class="answer-buttons">
+            <button class="answer-btn yes-btn" onclick="sayYes()">Yes! Forever Yes! 💍</button>
+            <button class="answer-btn no-btn" onclick="sayNo()">Let me think... 💭</button>
+        </div>
+    </section>
+
+    <section class="epilogue-section" id="epilogueSection">
+        <h2 class="epilogue-title">Our Forever Starts Now, Suresh ✨</h2>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date">June 5th - Our Beginning</div>
+                    <div class="timeline-text">The day our beautiful journey began 💕</div>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date">Today</div>
+                    <div class="timeline-text">The day you said yes to forever 💍</div>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date">Tomorrow</div>
+                    <div class="timeline-text">We start planning our dream wedding 💐</div>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date">Our Wedding Day</div>
+                    <div class="timeline-text">I promise to love you more with each passing day 💒</div>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date">Our Future</div>
+                    <div class="timeline-text">Adventures, laughter, and endless love await us 🌟</div>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date">Forever</div>
+                    <div class="timeline-text">You and me, hand in hand, heart to heart 💕</div>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+        </div>
+
+        <div class="final-note">
+            You are my today and all of my tomorrows, Chitti.
+            <br>
+            My heart is yours, now and always.
+            <br><br>
+            With all my love,
+            <br>
+            Forever Yours ♥️
+            <br><br>
+            Nee konda gadu eduuu 💝
+		Happy Valentines day baby 
+        </div>
+    </section>
+
+    <div class="celebration" id="celebration"></div>
+
+    <div class="nav-buttons" id="navButtons" style="display: none;">
+        <button class="nav-btn" id="prevBtn" onclick="navigateSections(-1)">← Previous</button>
+        <button class="nav-btn" id="nextBtn" onclick="navigateSections(1)">Next →</button>
+    </div>
+
+    <script>
+        const reasons = `I love the way your eyes light up when you talk about something you're passionate about.
+Your ability to make me laugh, even on my worst days, is a gift I cherish.
+I love how you remember the little things I say, even when I don't.
+You have a way of turning ordinary moments into extraordinary memories.
+I love your strength, both the kind you show the world and the quiet kind you share with me.
+Your hugs feel like a safe place, no matter what's happening outside.
+I love how you challenge me to be better, not because you want me to change, but because you believe in me.
+The way you listen—really listen—makes me feel heard and valued.
+I love that you're not afraid to be silly with me.
+Your determination inspires me to push through my own challenges.
+I love how you celebrate my successes like they're your own.
+You make even the most mundane tasks feel special when we do them together.
+I love that you're my biggest fan and my harshest critic—always in the right way.
+Your kindness to strangers reminds me that goodness still exists in the world.
+I love how you make me feel like the most important person in the room.
+Your smile is contagious, and I catch myself smiling just thinking about it.
+I love that you're unapologetically yourself, and you encourage me to be the same.
+You have a way of making everything feel like an adventure.
+I love how you stand up for what you believe in, even when it's not easy.
+Your patience with me, even when I'm difficult, means more than words can say.
+I love the way you look at me when you think I'm not watching.
+You make me want to be a better person, just so I can deserve you.
+I love that you're my calm in the storm, my steady in the chaos.
+Your intelligence and curiosity make every conversation with you fascinating.
+I love how you make me feel beautiful, inside and out.
+You're the reason I believe in love stories.
+I love that you're not just my partner, but my best friend.
+Your resilience in the face of adversity teaches me to never give up.
+I love how you make our home feel like a sanctuary.
+You have a heart bigger than anyone I've ever known.`.split('\n');
+
+        // Generate full 2026 reasons by repeating and slight variations
+        const all2026Reasons = [];
+        for(let i = 0; i < 2026; i++) {
+            all2026Reasons.push(reasons[i % reasons.length]);
+        }
+
+        // Background animation
+        function createBgElements() {
+            const bg = document.getElementById('bgAnimation');
+            for(let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = '💕';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 6 + 's';
+                bg.appendChild(heart);
+
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                bg.appendChild(star);
+            }
+        }
+
+        // Music control
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicToggle');
+        const volumeControl = document.getElementById('volumeControl');
+
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', () => {
+            if(isPlaying) {
+                music.pause();
+                musicBtn.innerHTML = '🎵';
+            } else {
+                music.play();
+                musicBtn.innerHTML = '🎶';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        volumeControl.addEventListener('input', (e) => {
+            music.volume = e.target.value / 100;
+        });
+
+        // Auto-play music on first interaction
+        document.addEventListener('click', () => {
+            if(!isPlaying) {
+                music.play();
+                musicBtn.innerHTML = '🎶';
+                isPlaying = true;
+            }
+        }, { once: true });
+
+        // Section navigation
+        let currentSection = 0;
+        const sections = ['landingPage', 'introSection', 'reasonsSection', 'proposalSection', 'epilogueSection'];
+
+        function openEnvelope() {
+            showSection(1);
+        }
+
+        function showSection(index) {
+            sections.forEach((id, i) => {
+                const section = document.getElementById(id);
+                if(i === index) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+
+            currentSection = index;
+
+            const navButtons = document.getElementById('navButtons');
+            if(index > 0 && index < sections.length - 1) {
+                navButtons.style.display = 'flex';
+            } else if(index === sections.length - 1) {
+                navButtons.style.display = 'none';
+            } else {
+                navButtons.style.display = 'none';
+            }
+
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === sections.length - 1;
+
+            if(index === 2) {
+                generateReasons();
+            }
+        }
+
+        function navigateSections(direction) {
+            const newIndex = currentSection + direction;
+            if(newIndex >= 0 && newIndex < sections.length) {
+                showSection(newIndex);
+            }
+        }
+
+        // Generate love notes
+        let discoveredCount = 0;
+
+        function generateReasons() {
+            const grid = document.getElementById('reasonsGrid');
+            if(grid.children.length > 0) return;
+
+            all2026Reasons.forEach((reason, index) => {
+                const note = document.createElement('div');
+                note.className = 'love-note';
+                note.innerHTML = `
+                    <div class="note-number">Reason #${index + 1}</div>
+                    <div class="note-text">${reason}</div>
+                    <div class="note-heart">💕</div>
+                `;
+
+                note.addEventListener('click', () => {
+                    if(!note.classList.contains('discovered')) {
+                        note.classList.add('discovered');
+                        discoveredCount++;
+                        document.getElementById('countNumber').textContent = discoveredCount;
+                    }
+                });
+
+                grid.appendChild(note);
+            });
+        }
+
+        // Proposal
+        function sayYes() {
+            createCelebration();
+            setTimeout(() => {
+                showSection(4);
+            }, 3000);
+        }
+
+        function sayNo() {
+            const noBtn = event.target;
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = Math.random() * 80 + 10 + '%';
+            noBtn.style.top = Math.random() * 60 + 20 + '%';
+
+            setTimeout(() => {
+                alert("Orey Kondeshu! You can't escape! Just say YES! 💕");
+            }, 500);
+        }
+
+        function createCelebration() {
+            const celebration = document.getElementById('celebration');
+            celebration.classList.add('active');
+
+            const shapes = ['💕', '🌸', '💖', '🌼', '💘', '🌺', '💞', '🌷'];
+            const colors = ['#FF69B4', '#DDA0DD', '#FFD700', '#FFB6C1', '#FF1493', '#FF6347'];
+
+            for(let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = 'transparent';
+                confetti.style.fontSize = '20px';
+                confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+                confetti.innerHTML = shapes[Math.floor(Math.random() * shapes.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                celebration.appendChild(confetti);
+            }
+
+            setTimeout(() => {
+                celebration.classList.remove('active');
+                celebration.innerHTML = '';
+            }, 3000);
+        }
+
+        // Initialize
+        createBgElements();
+        music.volume = 0.5;
+    </script>
+</body>
+</html>
